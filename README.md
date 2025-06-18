@@ -7,14 +7,14 @@ SQL Intermediate 'Practice Loop' mini-project
 - I changed the format of the 'release_date' in Excel - to remove a comma in each row.
 - I created a new table with SQL - to separate the multiple genre entries in each row of the 'user_defined_tags' field - named 'game_genres':
 - I deleted 10 genre lines from game_genres. 
-
 <br>
 
 ## Joins & Aggregates
 
-I searched for the 10 game records with missing genre fields. 
+### JOIN practice
 
-SAMPLE FORMAT:
+I searched for the 10 game records with missing genre fields, to practice LEFT and RIGHT JOINs. 
+
 ```sql 
 
 SELECT m.game_name, 
@@ -26,3 +26,37 @@ WHERE g.genre IS NULL;
 
 ```
 
+```sql 
+
+SELECT m.game_name, 
+	g.genre
+FROM game_genres AS g
+RIGHT JOIN steam_main AS m
+	ON m.game_name = g.game_name
+WHERE g.genre IS NULL; 
+
+```
+
+### Write a query using at least 2 JOINs. 
+
+I searched records without missing game genres and then filtered for difficulty over 3. 
+
+```sql
+
+SELECT m.game_name, 
+	g.genre,
+	f.difficulty
+FROM steam_main AS m
+LEFT JOIN game_genres AS g
+	ON m.game_name = g.game_name
+INNER JOIN game_faqs AS f
+	ON m.game_name = f.game_name
+WHERE g.genre IS NOT NULL 
+	AND m.game_name IN (
+		SELECT f.game_name
+		FROM game_faqs AS f
+		WHERE f.difficulty > 3
+	)
+ORDER BY f.difficulty DESC;
+
+```
