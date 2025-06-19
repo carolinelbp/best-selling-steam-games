@@ -39,7 +39,7 @@ WHERE g.genre IS NULL;
 
 ### Write a query using at least 2 JOINs. 
 
-I searched records without missing game genres and then filtered for difficulty over 3. 
+I searched records with all their game genres present and then filtered for difficulty over 3. 
 
 ```sql
 
@@ -60,3 +60,22 @@ WHERE g.genre IS NOT NULL
 ORDER BY f.difficulty DESC;
 
 ```
+
+### Create a summary table using GROUP BY and COUNT/SUM/AVG.
+
+Which developers have produced the most best-selling Steam games? 
+
+```sql
+SELECT developer,
+	COUNT(developer) AS number_of_games
+FROM steam_main
+GROUP BY developer
+ORDER BY number_of_games DESC
+LIMIT 5;
+
+```
+
+<p align="center">
+  <img src="images/top-developers.png" alt="Top Developers" width="600">
+</p>
+
