@@ -75,7 +75,7 @@ LIMIT 5;
 
 ```
 
-<p align="center">
+<p align="left">
   <img src="images/top-developers.png" alt="Top Developers" width="500">
 </p>
 
