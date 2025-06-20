@@ -96,3 +96,33 @@ ORDER BY total_downloads DESC;
 
 ## CASE Statements
 
+### Use CASE in a SELECT to create a new category (e.g., “high-rated”, “low-rated”).
+
+```sql
+SELECT game_name,
+	reviews_like_rate,
+	CASE 
+		WHEN reviews_like_rate > 49 THEN 'high-rated'
+		ELSE 'low-rated'
+		END AS rating_category
+FROM steam_main
+ORDER BY reviews_like_rate DESC;
+```
+
+### Use CASE in an ORDER BY to custom sort your results.
+
+```sql
+SELECT 
+	game_name,
+  	CASE 
+  		WHEN supported_languages ILIKE '%Japanese%' THEN 'Supports Japanese'
+    		ELSE 'Does NOT support Japanese'
+  		END AS language_support
+FROM steam_main
+GROUP BY game_name
+ORDER BY CASE 
+		WHEN supported_languages ILIKE '%Japanese%' THEN 0
+		ELSE 1
+		END,
+	game_name;
+```
