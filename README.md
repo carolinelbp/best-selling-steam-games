@@ -111,6 +111,8 @@ ORDER BY reviews_like_rate DESC;
 
 ### Use CASE in an ORDER BY to custom sort your results.
 
+Sorting games alphabetically, prioritising those support Japanese. 
+
 ```sql
 SELECT 
 	game_name,
@@ -125,4 +127,56 @@ ORDER BY CASE
 		ELSE 1
 		END,
 	game_name;
+```
+
+### Use CASE inside a WHERE to conditionally filter.
+
+Filtering out games with high prices and low ratings. 
+
+```sql
+SELECT game_name,
+	price,
+	reviews_like_rate
+FROM steam_main
+WHERE price <
+	CASE 
+		WHEN reviews_like_rate < 50 THEN 25
+		ELSE 45
+	END;
+```
+<br>
+
+## Subqueries
+
+### Write a query with a subquery in the SELECT clause (e.g., compare a value to a group average).
+
+Show downloads for game Rust alongside average price and length across all games. 
+
+```sql
+SELECT game_name,
+	estimated_downloads,
+	(SELECT
+		ROUND(AVG(price), 2)
+		FROM steam_main) AS average_price_in_$,
+	(SELECT
+		ROUND(AVG(length), 0)
+		FROM game_faqs) AS average_length_in_hours
+FROM steam_db
+WHERE game_name LIKE 'Rust';
+```
+
+### Use a correlated subquery in a WHERE clause to filter based on row-by-row comparison.
+
+Only include games above or equal to the average rating for their developer. 
+
+```sql
+SELECT game_name,
+	developer,
+	reviews_like_rate
+FROM steam_main AS outer_table
+WHERE reviews_like_rate >= (
+	SELECT AVG(reviews_like_rate)
+	FROM steam_main AS inner_table
+	WHERE inner_table.developer = outer_table.developer
+	);
 ```
