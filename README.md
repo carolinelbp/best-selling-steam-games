@@ -180,3 +180,11 @@ WHERE reviews_like_rate >= (
 	WHERE inner_table.developer = outer_table.developer
 	);
 ```
+
+### Nest one subquery inside another to produce a derived metric.
+
+..
+
+```sql
+
+```
