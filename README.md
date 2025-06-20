@@ -78,7 +78,9 @@ LIMIT 5;
   <img src="images/top-developers.png" alt="Top Developers" width="500">
 </p>
 
-Which genres have the most downloads? 
+### Include a HAVING clause to filter based on aggregate.
+
+Which genres have over 1 million downloads? 
 
 ```sql
 SELECT g.genre,
@@ -87,7 +89,10 @@ FROM game_genres AS g
 INNER JOIN steam_db AS d
 	ON g.game_name = d.game_name
 GROUP BY g.genre
-ORDER BY total_downloads DESC
-LIMIT 5; 
+HAVING SUM(d.estimated_downloads) > 1000000
+ORDER BY total_downloads DESC; 
 ```
+<br>
+
+## CASE Statements
 
