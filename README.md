@@ -72,10 +72,22 @@ FROM steam_main
 GROUP BY developer
 ORDER BY number_of_games DESC
 LIMIT 5;
-
 ```
 
 <p align="left">
   <img src="images/top-developers.png" alt="Top Developers" width="500">
 </p>
+
+Which genres have the most downloads? 
+
+```sql
+SELECT g.genre,
+	SUM(d.estimated_downloads) AS total_downloads
+FROM game_genres AS g
+INNER JOIN steam_db AS d
+	ON g.game_name = d.game_name
+GROUP BY g.genre
+ORDER BY total_downloads DESC
+LIMIT 5; 
+```
 
