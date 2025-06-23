@@ -183,8 +183,48 @@ WHERE reviews_like_rate >= (
 
 ### Nest one subquery inside another to produce a derived metric.
 
-..
+Show games with more reviews than the average number of reviews for all games rated over 3.
 
 ```sql
-
+SELECT m.game_name,
+	m.all_reviews_number
+FROM steam_main AS m
+INNER JOIN game_faqs AS f
+	ON m.game_name = f.game_name
+WHERE m.all_reviews_number > (
+	SELECT avg_reviews_over_3
+	FROM (
+		SELECT AVG(m2.all_reviews_number) AS avg_reviews_over_3
+		FROM steam_main AS m2
+		INNER JOIN game_faqs AS f2
+		ON m2.game_name = f2.game_name
+		WHERE f2.rating > 3
+		)
+	);
 ```
+<br>
+
+## CTEs
+
+### Write a CTE to break a long query into parts.
+
+Previous query, restructured. 
+
+```sql
+WITH avg_reviews_query AS (
+	SELECT AVG(m2.all_reviews_number) AS avg_reviews_over_3
+			FROM steam_main AS m2
+			INNER JOIN game_faqs AS f2
+			ON m2.game_name = f2.game_name
+			WHERE f2.rating > 3
+			)
+
+SELECT m.game_name,
+	m.all_reviews_number
+FROM steam_main AS m
+INNER JOIN game_faqs AS f
+	ON m.game_name = f.game_name
+CROSS JOIN avg_reviews_query
+WHERE m.all_reviews_number > avg_reviews_query.avg_reviews_over_3;
+```
+
