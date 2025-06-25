@@ -231,9 +231,9 @@ WHERE m.all_reviews_number > avg_reviews_query.avg_reviews_over_3;
 ### Chain 2+ CTEs together for multi-step logic.
 
 1. Identify underrated games by niche developers
-Step 1: Get average rating per developer
-Step 2: Compare each game's rating to their developer's average
-Step 3: Filter for games that outperform their dev's average by a big margin
+   Step 1: Get average rating per developer
+   Step 2: Compare each game's rating to their developer's average
+   Step 3: Filter for games that outperform their dev's average by a big margin
 
 ```sql
 WITH dev_avg_rating AS (
@@ -260,9 +260,9 @@ WHERE rating_diff > 1.0;
 ```
 
 2. Find long, hard games with low download numbers (hidden gems)
-Step 1: Filter for long and difficult games
-Step 2: Rank those by estimated downloads
-Step 3: Pull the least downloaded ones (bottom 20%)
+   Step 1: Filter for long and difficult games
+   Step 2: Rank those by estimated downloads
+   Step 3: Pull the least downloaded ones (bottom 20%)
 
 ```sql
 WITH long_difficult_games AS (
