@@ -228,3 +228,61 @@ CROSS JOIN avg_reviews_query
 WHERE m.all_reviews_number > avg_reviews_query.avg_reviews_over_3;
 ```
 
+### Chain 2+ CTEs together for multi-step logic.
+
+1. Identify underrated games by niche developers
+Step 1: Get average rating per developer
+Step 2: Compare each game's rating to their developer's average
+Step 3: Filter for games that outperform their dev's average by a big margin
+
+```sql
+WITH dev_avg_rating AS (
+	SELECT m.developer, ROUND(AVG(f.rating),2) AS avg_rating
+	FROM steam_main AS m
+	INNER JOIN game_faqs AS f
+		ON m.game_name = f.game_name
+	GROUP BY m.developer
+	),
+	
+	game_vs_dev AS (
+	SELECT f.game_name, m.developer, f.rating, d.avg_rating, f.rating - d.avg_rating AS rating_diff
+	FROM steam_main AS m
+	INNER JOIN game_faqs AS f
+		ON m.game_name = f.game_name		
+	INNER JOIN dev_avg_rating AS d
+		ON d.developer = m.developer
+	GROUP BY f.game_name, d.avg_rating, m.developer
+	)
+
+SELECT *
+FROM game_vs_dev
+WHERE rating_diff > 1.0; 
+```
+
+2. Find long, hard games with low download numbers (hidden gems)
+Step 1: Filter for long and difficult games
+Step 2: Rank those by estimated downloads
+Step 3: Pull the least downloaded ones (bottom 20%)
+
+```sql
+WITH long_difficult_games AS (
+	SELECT f.game_name, f.difficulty, f.length, d.estimated_downloads
+	FROM game_faqs AS f
+	INNER JOIN steam_db AS d
+		ON f.game_name = d.game_name
+	WHERE difficulty >= 4 
+		AND length >= 60
+	),
+
+	ranked_games AS (
+	SELECT *, 
+		NTILE(5) OVER (ORDER BY estimated_downloads ASC) AS download_tile
+	FROM long_difficult_games
+	)
+
+SELECT game_name, difficulty, length, estimated_downloads, difficulty + length AS diff_length_total
+FROM ranked_games
+WHERE download_tile = 1
+ORDER BY diff_length_total DESC; 
+```
+
