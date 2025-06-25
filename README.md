@@ -231,9 +231,9 @@ WHERE m.all_reviews_number > avg_reviews_query.avg_reviews_over_3;
 ### Chain 2+ CTEs together for multi-step logic.
 
 1. Identify underrated games by niche developers
-   Step 1: Get average rating per developer
-   Step 2: Compare each game's rating to their developer's average
-   Step 3: Filter for games that outperform their dev's average by a big margin
+   - Step 1: Get average rating per developer
+   - Step 2: Compare each game's rating to their developer's average
+   - Step 3: Filter for games that outperform their dev's average by a big margin
 
 ```sql
 WITH dev_avg_rating AS (
@@ -260,9 +260,9 @@ WHERE rating_diff > 1.0;
 ```
 
 2. Find long, hard games with low download numbers (hidden gems)
-   Step 1: Filter for long and difficult games
-   Step 2: Rank those by estimated downloads
-   Step 3: Pull the least downloaded ones (bottom 20%)
+   - Step 1: Filter for long and difficult games
+   - Step 2: Rank those by estimated downloads
+   - Step 3: Pull the least downloaded ones (bottom 20%)
 
 ```sql
 WITH long_difficult_games AS (
@@ -284,5 +284,37 @@ SELECT game_name, difficulty, length, estimated_downloads, difficulty + length A
 FROM ranked_games
 WHERE download_tile = 1
 ORDER BY diff_length_total DESC; 
+```
+
+3. Compare average review count for high-rated games by age group
+   - Step 1: Filter for games with rating > 4
+   - Step 2: Bucket games by age restriction
+   - Step 3: Average review count per age bucket
+
+```sql
+WITH high_rated AS (
+	SELECT f.age_restriction, m.all_reviews_number
+	FROM game_faqs AS f
+	INNER JOIN steam_main AS m
+		ON f.game_name = m.game_name
+	WHERE f.rating > 4
+	),
+
+	age_restriction_groups AS (
+	SELECT 
+		CASE 
+			WHEN age_restriction < 10 THEN 'Everyone'
+			WHEN age_restriction < 13 THEN 'Kids'
+			WHEN age_restriction < 17 THEN  'Teen'
+			ELSE 'Mature' 
+		END AS age_group, 
+		all_reviews_number
+	FROM high_rated
+	)
+
+SELECT age_group, ROUND(AVG(all_reviews_number), 0) AS avg_reviews
+FROM age_restriction_groups
+GROUP BY age_group
+ORDER BY avg_reviews DESC; 
 ```
 
