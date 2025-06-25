@@ -320,3 +320,27 @@ GROUP BY age_group
 ORDER BY avg_reviews DESC; 
 ```
 
+### Use a CTE + final SELECT that aggregates or joins the intermediate data.
+
+What percentage of the top games are Mature (17+) age-restricted? 
+
+```sql
+WITH mature_games AS (
+	SELECT game_name, 
+		age_restriction
+	FROM game_faqs
+	WHERE age_restriction >= 17
+),
+
+	total_games AS (
+	SELECT COUNT(*) AS total_count
+	FROM game_faqs
+)
+
+SELECT COUNT(*) AS mature_count,
+	ROUND(100.0 * COUNT(*) / t.total_count, 0) AS mature_percentage
+FROM mature_games AS m
+CROSS JOIN total_games AS t
+GROUP BY t.total_count; 
+```
+
