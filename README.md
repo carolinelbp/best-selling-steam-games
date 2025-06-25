@@ -344,3 +344,7 @@ CROSS JOIN total_games AS t
 GROUP BY t.total_count; 
 ```
 
+## Window Functions
+
+### Use RANK() or DENSE_RANK() to rank items within categories.
+
