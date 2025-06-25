@@ -259,6 +259,7 @@ FROM game_vs_dev
 WHERE rating_diff > 1.0; 
 ```
 
+
 2. Find long, hard games with low download numbers (hidden gems)
    - Step 1: Filter for long and difficult games
    - Step 2: Rank those by estimated downloads
@@ -285,6 +286,7 @@ FROM ranked_games
 WHERE download_tile = 1
 ORDER BY diff_length_total DESC; 
 ```
+
 
 3. Compare average review count for high-rated games by age group
    - Step 1: Filter for games with rating > 4
