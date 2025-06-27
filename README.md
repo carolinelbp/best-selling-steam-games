@@ -348,3 +348,35 @@ GROUP BY t.total_count;
 
 ### Use RANK() or DENSE_RANK() to rank items within categories.
 
+Which 10 games are ranked highest? 
+
+```sql
+SELECT game_name, 
+	rating, 
+	RANK() OVER(ORDER BY rating DESC) AS rating_rank
+FROM game_faqs
+LIMIT 10; 
+```
+
+### Use LAG() or LEAD() to compare a row to the previous/next.
+
+Does each developers' game ratings get better or worse over time? 
+
+```sql
+SELECT m.game_name,
+       m.developer,
+	   m.release_date,
+	   f.rating,
+       LAG(f.rating) OVER (PARTITION BY m.developer ORDER BY m.release_date) AS previous_rating_by_same_dev,
+	   CASE 
+	   		WHEN LAG(f.rating) OVER (PARTITION BY m.developer ORDER BY m.release_date) < f.rating THEN 'higher'
+			WHEN LAG(f.rating) OVER (PARTITION BY m.developer ORDER BY m.release_date) > f.rating THEN 'lower'
+			WHEN LAG(f.rating) OVER (PARTITION BY m.developer ORDER BY m.release_date) IS NULL THEN 'N/A'
+	   		ELSE 'same' 
+			  END AS higher_or_lower
+FROM steam_main AS m
+INNER JOIN game_faqs AS f
+	ON m.game_name = f.game_name;
+```
+
+### Use a cumulative function like SUM() OVER(...) to track running totals or trends.
