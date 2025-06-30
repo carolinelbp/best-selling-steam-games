@@ -381,6 +381,10 @@ INNER JOIN game_faqs AS f
 
 ### Use a cumulative function like SUM() OVER(...) to track running totals or trends.
 
+TBC
+
+### Add a PARTITION BY to apply your function per group.
+
 Which developers have the highest average number of downloads between all games? 
 
 ```sql
