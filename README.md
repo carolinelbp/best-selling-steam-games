@@ -381,4 +381,16 @@ INNER JOIN game_faqs AS f
 
 ### Use a cumulative function like SUM() OVER(...) to track running totals or trends.
 
+Which developers have the highest average number of downloads between all games? 
+
+```sql
+SELECT m.developer,
+	m.game_name,
+	ROUND(AVG(d.estimated_downloads) OVER (ORDER BY m.developer), 0) AS total_downloads
+FROM steam_db AS d
+INNER JOIN steam_main AS m
+	ON d.game_name = m.game_name
+ORDER BY total_downloads DESC;
+```
+
 
