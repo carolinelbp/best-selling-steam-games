@@ -386,11 +386,12 @@ Which developers have the highest average number of downloads between all games?
 ```sql
 SELECT m.developer,
 	m.game_name,
-	ROUND(AVG(d.estimated_downloads) OVER (ORDER BY m.developer), 0) AS total_downloads
+	d.estimated_downloads,
+	ROUND(AVG(d.estimated_downloads) OVER (PARTITION BY m.developer), 0) AS avg_downloads_per_dev
 FROM steam_db AS d
 INNER JOIN steam_main AS m
 	ON d.game_name = m.game_name
-ORDER BY total_downloads DESC;
+ORDER BY avg_downloads_per_dev DESC;
 ```
 
 
