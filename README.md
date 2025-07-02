@@ -427,3 +427,6 @@ INNER JOIN steam_main AS m
 	ON d.game_name = m.game_name
 ORDER BY avg_downloads_per_dev DESC;
 ```
+
+## Integration Challenge
+
