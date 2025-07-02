@@ -430,3 +430,36 @@ ORDER BY avg_downloads_per_dev DESC;
 
 ## Integration Challenge
 
+Write a single SQL query that satisfies all of the following:
+- Uses a CTE to filter for games that have a rating of at least 3 and a difficulty of at least 2.
+- In the main query, use a window function to assign a percentile or ranking to each game's number of estimated downloads.
+- Use a CASE statement to label each game as 'Popular', 'Moderate', or 'Low' based on how its downloads compare to the average downloads of all filtered games.
+- Use at least one subquery to calculate that average.
+
+Your result should display: game name, rating, difficulty, estimated downloads, the window function result, and the CASE label.
+
+```sql
+WITH filtered_games AS (
+	SELECT game_name,
+		rating,
+		difficulty
+	FROM game_faqs
+	WHERE rating >= 3 AND difficulty >= 2
+)
+
+SELECT 
+	fg.game_name,
+	fg.rating,
+	fg.difficulty,
+	sd.estimated_downloads,
+	RANK() OVER(ORDER BY sd.estimated_downloads) AS downloads_rank,
+	CASE 
+		WHEN sd.estimated_downloads > 1.5 * (SELECT AVG(estimated_downloads) FROM steam_db) THEN 'Popular'
+		WHEN sd.estimated_downloads > 0.5 * (SELECT AVG(estimated_downloads) FROM steam_db) THEN 'Moderate'
+		ELSE 'Low' 
+		END AS popularity
+FROM filtered_games AS fg
+LEFT JOIN steam_db AS sd
+	ON fg.game_name = sd.game_name;
+```
+
