@@ -1,5 +1,7 @@
-# Best Selling Steam Games
+# Best-Selling Steam Games
 SQL Intermediate 'Practice Loop' mini-project
+
+Using this data: https://www.kaggle.com/datasets/hbugrae/best-selling-steam-games-of-all-time
 <br>
 
 ### 🧼 Data Cleaning & Manipulation
