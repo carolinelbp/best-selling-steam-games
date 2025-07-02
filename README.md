@@ -381,7 +381,37 @@ INNER JOIN game_faqs AS f
 
 ### Use a cumulative function like SUM() OVER(...) to track running totals or trends.
 
-TBC
+How does the total number of downloads grow as ratings improve?
+
+```sql
+SELECT f.game_name,
+	f.rating,
+	d.estimated_downloads,
+	SUM(d.estimated_downloads) OVER(ORDER BY f.rating, d.game_name) AS running_total_downloads
+FROM steam_db AS d
+INNER JOIN game_faqs AS f
+	ON d.game_name = f.game_name;
+ ```
+
+### Use a GROUP BY function alongside a window function to track overall trends (my addition to include)
+
+How does the total number of downloads grow as difficulty increases? 
+
+```sql
+WITH downloads_by_difficulty AS (
+  SELECT f.difficulty,
+         SUM(d.estimated_downloads) AS total_downloads
+  FROM steam_db AS d
+  INNER JOIN game_faqs AS f 
+  		ON d.game_name = f.game_name
+  GROUP BY f.difficulty
+)
+
+SELECT difficulty,
+       total_downloads,
+       SUM(total_downloads) OVER (ORDER BY difficulty) AS running_total_downloads
+FROM downloads_by_difficulty;
+```
 
 ### Add a PARTITION BY to apply your function per group.
 
@@ -397,5 +427,3 @@ INNER JOIN steam_main AS m
 	ON d.game_name = m.game_name
 ORDER BY avg_downloads_per_dev DESC;
 ```
-
-
